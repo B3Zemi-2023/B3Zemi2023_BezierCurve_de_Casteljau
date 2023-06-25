@@ -42,7 +42,7 @@ public class Main extends JFrame {
             }
         }
 
-        if (m_evaluatePoints.size() > 0){
+        if (m_evaluatePoints.size() > 0 && m_evaluatePoints.get(0) != null){
             for (int i = 0; i < m_evaluatePoints.size()-1; ++i){
                 drawLine(m_evaluatePoints.get(i), m_evaluatePoints.get(i+1), Color.blue, _g);
             }
