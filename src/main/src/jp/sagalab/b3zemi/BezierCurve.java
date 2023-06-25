@@ -6,6 +6,45 @@ import java.util.List;
 
 public class BezierCurve {
 
+    /** 制御点列 */
+    private final List<Point2D> m_controlPoints;
+
+    /**
+     * パラメータ t に対応する評価点を De Casteljau のアルゴリズムで評価する.
+     * @param _t 閉区間 [ 0, 1 ] 内のパラメータ
+     * @return パラメータ t に対応する評価点
+     */
+    public Point2D evaluate(double _t){
+        //手順は1例です. 分かる人は無視して大丈夫です.
+        // 手順1: 制御点3つのときに限定して計算を考えてみましょう(式を列挙する形でも〇)　
+        // 手順2: 制御点4つのときに限定して計算を考えてみましょう(手順1に式を加えるだけです).
+        // 例: Point2D p = internal(点1, 点2, _t)
+
+        // 手順3: 列挙した式をwhileやforなどのループで圧縮しましょう.
+        /* 例: for(何回ループするかは考えてください){
+                  (リスト).add(計算した内分点)        // リストは自分で宣言しましょう. 作り方によってはリストが2つ必要かも？
+              }
+        */
+        return null;
+    }
+
+    /**
+     * 2点を内分する点を計算する.
+     * @param _p1 1つめの点
+     * @param _p2 2つめの点
+     * @param _t 比率
+     * @return 内分点
+     */
+    public static Point2D.Double internal(Point2D _p1, Point2D _p2, double _t){
+        //_p1と_p2を(1-_t):_tに内分する.
+        double x = 0.0; /* 内分する式(x)をここに書き込んでください*/
+        double y = 0.0; /* 内分する式(y)をここに書き込んでください*/
+        return new Point2D.Double(x, y);
+    }
+
+    public List<Point2D> getControlPoints(){
+        return new ArrayList<>(m_controlPoints);
+    }
 
     /**
      * Bezier曲線の生成を行うためのstaticファクトリーメソッドです.
@@ -17,42 +56,6 @@ public class BezierCurve {
     }
 
     /**
-     * パラメータ t に対応する評価点を De Casteljau のアルゴリズムで評価する.
-     * @param _t 閉区間 [ 0, 1 ] 内のパラメータ
-     * @return パラメータ t に対応する評価点
-     */
-    public Point2D evaluate(double _t){
-        List<Point2D> copyPoints = new ArrayList<>(m_controlPoints);
-        ArrayList<Point2D> bezierPoints = new ArrayList<>();
-        while (copyPoints.size() > 1){
-            bezierPoints.clear();
-            for(int j = 0; j < copyPoints.size() - 1; j++){
-                double x = (1.0 - _t) * copyPoints.get(j).getX() + _t * copyPoints.get(j+1).getX();
-                double y = (1.0 - _t) * copyPoints.get(j).getY() + _t * copyPoints.get(j+1).getY();
-                bezierPoints.add(new Point2D.Double(x, y));
-            }
-            copyPoints = new ArrayList<>(bezierPoints);
-        }
-        return bezierPoints.get(0);
-    }
-
-    /**
-     * 制御点列のコピーを取得する.
-     * @return 制御点列のコピー
-     */
-    public List<Point2D> getControlPoints(){
-        return m_controlPoints;
-    }
-
-    /**
-     * 次数を取得する.
-     * @return 次数
-     */
-    public int getDegree(){
-        return m_controlPoints.size() - 1;
-    }
-
-    /**
      * 制御点列を指定してBezier曲線オブジェクトを生成する.
      * @param _controlPoints 制御点列
      */
@@ -60,6 +63,36 @@ public class BezierCurve {
         m_controlPoints = _controlPoints;
     }
 
-    /** 制御点列 */
-    private final List<Point2D> m_controlPoints;
+//----------------------------------------------------------------------------------------------------------------------
+//どうしてもわからないときに利用してください.
+//利用する際はプログラムの意味を理解してください.
+
+//再帰なし
+//    public Point2D evaluate(double _t){
+//        /* 制御点をコピーしたリストを用意. */
+//        /* 計算結果を保存するリストを用意. */
+//        while (/* コピーリストが0よりも大きいときループ */){
+//            /* 保存用リストを初期化. */
+//            for(/* コピーリストのサイズ-1までループ */){
+//                /* 計算して保存用リストに追加. */
+//            }
+//            /* コピーリストに保存用リストをコピーする */ //注意 listA = listBの形ではありません.
+//        }
+//        return /* コピーの一つ目を返す. */;
+//    }
+
+//再帰あり
+//    public Point2D evaluate(double _t){
+//        /* 計算結果を保存するリストを用意 */
+//        if(/* 制御点の数が1の時 */){
+//            /* 制御点の1つ目を返す. */
+//        }
+//        for(/* 制御点の数-1までループ */){
+//            /* 計算して保存用リストに追加. */
+//        }
+//        /* BezierCurveクラスのインスタンを生成*/
+//        return /* 計算結果を返す. */;
+//    }
 }
+
+

@@ -9,6 +9,9 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class Main extends JFrame {
 
@@ -16,6 +19,7 @@ public class Main extends JFrame {
      * @param _args the command line arguments
      */
     public static void main(String[] _args) {
+//        canMove = true;
         new Main();
     }
 
@@ -27,15 +31,38 @@ public class Main extends JFrame {
     public void paint(Graphics _g) {
         super.paint(_g);
         if (m_controlPoints.size() > 0){
-            for (int i = 0; i < m_controlPoints.size(); i++){
+            for (int i = 0; i < m_controlPoints.size(); ++i){
                 drawPoint(m_controlPoints.get(i), Color.RED, _g);
             }
         }
 
+        if (m_controlPoints.size() > 1){
+            for (int i = 0; i < m_controlPoints.size()-1; ++i){
+                drawLine(m_controlPoints.get(i), m_controlPoints.get(i+1), Color.gray, _g);
+            }
+        }
+
         if (m_evaluatePoints.size() > 0){
-            for (int i = 0; i < m_evaluatePoints.size()-1; i++){
+            for (int i = 0; i < m_evaluatePoints.size()-1; ++i){
                 drawLine(m_evaluatePoints.get(i), m_evaluatePoints.get(i+1), Color.blue, _g);
             }
+        }
+
+        if(m_internalPoints.size() > 0){
+            int degree = m_controlPoints.size() - 1;
+            int next = 0;
+            while (degree > 1){
+                int pre = 0;
+                for(int i = next; i < next + degree - 1; ++i){
+                    drawLine(m_internalPoints.get(i), m_internalPoints.get(i+1), Color.GREEN, _g);
+                    drawPoint(m_internalPoints.get(i), Color.black, _g);
+                    drawPoint(m_internalPoints.get(i+1), Color.black, _g);
+                    ++pre;
+                }
+                next += pre + 1;
+                --degree;
+            }
+            drawPoint(m_internalPoints.get(next), Color.RED, _g);
         }
     }
 
@@ -46,15 +73,10 @@ public class Main extends JFrame {
      * @param _g     グラフィックス
      */
     private void drawPoint(Point2D _point, Color _color, Graphics _g) {
-        double radius = POINT_RADIUS;
-        _g.setColor(_color);
-        Graphics2D g2D = _g instanceof Graphics2D ? ((Graphics2D) _g) : null;
-        if (g2D != null) {
-            g2D.setStroke(new BasicStroke(STROKE_WIDTH));
-            g2D.draw(new Ellipse2D.Double(_point.getX() - radius, _point.getY() - radius, radius * 2, radius * 2));
-        } else {
-            _g.drawOval((int) (_point.getX() - radius), (int) (_point.getY() - radius), (int) (radius * 2), (int) (radius * 2));
-        }
+        Graphics2D g = (Graphics2D)_g;
+        g.setColor(_color);
+        g.setStroke(new BasicStroke(STROKE_WIDTH));
+        g.draw(new Ellipse2D.Double(_point.getX() - POINT_RADIUS, _point.getY() - POINT_RADIUS, POINT_RADIUS * 2, POINT_RADIUS * 2));
     }
 
     /**
@@ -65,14 +87,10 @@ public class Main extends JFrame {
      * @param _g     グラフィックス
      */
     private void drawLine(Point2D _p1, Point2D _p2, Color _color, Graphics _g) {
-        _g.setColor(_color);
-        Graphics2D g2D = _g instanceof Graphics2D ? ((Graphics2D) _g) : null;
-        if (g2D != null) {
-            g2D.setStroke(new BasicStroke(STROKE_WIDTH));
-            g2D.draw(new Line2D.Double(_p1.getX(), _p1.getY(), _p2.getX(), _p2.getY()));
-        } else {
-            _g.drawLine((int) _p1.getX(), (int) _p1.getY(), (int) _p2.getX(), (int) _p2.getY());
-        }
+        Graphics2D g = (Graphics2D)_g;
+        g.setColor(_color);
+        g.setStroke(new BasicStroke(STROKE_WIDTH));
+        g.draw(new Line2D.Double(_p1.getX(), _p1.getY(), _p2.getX(), _p2.getY()));
     }
 
     /**
@@ -82,9 +100,10 @@ public class Main extends JFrame {
         BezierCurve bezierCurve = BezierCurve.create(m_controlPoints);
         List<Point2D> evaluatePoints = new ArrayList<>();
 
-        for(double t = 0; t < 1.0; t += 0.01){
-            m_evaluatePoints.add(bezierCurve.evaluate(t));
+        for(double t = 0; t < T; ++t){
+            evaluatePoints.add(bezierCurve.evaluate(t/T));
         }
+        m_evaluatePoints = evaluatePoints;
     }
 
     /**
@@ -99,32 +118,101 @@ public class Main extends JFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                m_controlPoints.add(new Point2D.Double(e.getX(),e.getY()));
+                if(!moveFlag){
+                    m_controlPoints.add(new Point2D.Double(e.getX(),e.getY()));
 
-                if(m_controlPoints.size() > 2){
-                    calculate();
+                    if(m_controlPoints.size() > 2){
+                        calculate();
+                        if(moveCount > 0){
+                            setInternalPoints(moveCount/T);
+                        }
+                    }
+                    repaint();
                 }
-                repaint();
             }
         });
 
-        JButton button = new JButton("Reset");
-        setContentPane((new JPanel()).add(button).getParent());
-        button.addActionListener(e->{
+        JPanel pMain = new JPanel();
+        JButton bReset = new JButton("Reset");
+        pMain.add(bReset);
+        setContentPane(pMain);
+        bReset.addActionListener(e -> {
             m_controlPoints.clear();
             m_evaluatePoints.clear();
+            m_internalPoints.clear();
+            moveFlag = false;
             repaint();
         });
+
+        JButton bStart = new JButton("Start");
+        pMain.add(bStart);
+        setContentPane(pMain);
+        bStart.addActionListener(e -> {
+            if(m_controlPoints.size() > 2 && !moveFlag){
+                moveFlag = true;
+                bStart.setText("Stop");
+            }else if(moveFlag){
+                moveFlag = false;
+                bStart.setText("Start");
+            }
+        });
+
+        if(!canMove){
+           bStart.setEnabled(false);
+        }
+
+        ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
+        service.scheduleAtFixedRate(() -> {
+            if(moveFlag){
+                if(moveCount < T){
+                    ++moveCount;
+                    setInternalPoints(moveCount/T);
+                }else{
+                    moveCount = 0;
+                    moveFlag = false;
+                    bStart.setText("Start");
+                }
+                repaint();
+            }
+        },0,T, TimeUnit.MILLISECONDS);
+
         pack();
         setVisible(true);
     }
+
+    private void setInternalPoints(double _t){
+        m_internalPoints.clear();
+        int degree = m_controlPoints.size() - 1;
+        List<Point2D> copyPoints = new ArrayList<>(m_controlPoints);
+        List<Point2D> prePoints = new ArrayList<>();
+        while (degree > 0){
+            prePoints.clear();
+            for (int i = 0; i < degree; ++i){
+                Point2D p = BezierCurve.internal(copyPoints.get(i),copyPoints.get(i+1),_t);
+                prePoints.add(p);
+                m_internalPoints.add(p);
+            }
+            copyPoints = new ArrayList<>(prePoints);
+            --degree;
+        }
+    }
+
     /** 描画する際の線の幅 */
     private static final float STROKE_WIDTH = 1.5f;
     /** 点を描画する際の半径 */
     private static final double POINT_RADIUS = 3.0;
+    /** 分割数 **/
+    private static final int T = 100;
 
     /** 制御点列　*/
     private final List<Point2D> m_controlPoints = new ArrayList<>();
     /** 評価点列 */
     private List<Point2D> m_evaluatePoints = new ArrayList<>();
+
+    static private boolean canMove = false;
+    private boolean moveFlag = false;
+
+    private List<Point2D> m_internalPoints = new ArrayList<>();
+
+    private double moveCount = 0.0;
 }
