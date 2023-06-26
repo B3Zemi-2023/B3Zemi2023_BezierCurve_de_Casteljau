@@ -215,4 +215,5 @@ public class Main extends JFrame {
     private List<Point2D> m_internalPoints = new ArrayList<>();
 
     private double moveCount =  0.0;
+    private double a;
 }
