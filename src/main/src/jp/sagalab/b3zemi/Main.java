@@ -19,7 +19,7 @@ public class Main extends JFrame {
      * @param _args the command line arguments
      */
     public static void main(String[] _args) {
-//        canMove = true;
+        canMove = true;
         new Main();
     }
 

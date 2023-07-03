@@ -16,16 +16,33 @@ public class BezierCurve {
      */
     public Point2D evaluate(double _t){
         //手順は1例です. 分かる人は無視して大丈夫です.
-        // 手順1: 制御点3つのときに限定して計算を考えてみましょう(式を列挙する形でも〇)　
+        // 手順1: 制御点3つのときに限定して計算を考えてみましょう(式を列挙する形でも〇)
+//        Point2D a1 = internal(m_controlPoints.get(0), m_controlPoints.get(1), _t);
+//        Point2D a2 = internal(m_controlPoints.get(1), m_controlPoints.get(2), _t);
+//        Point2D b1 = internal(a1, a2, _t);
         // 手順2: 制御点4つのときに限定して計算を考えてみましょう(手順1に式を加えるだけです).
         // 例: Point2D p = internal(点1, 点2, _t)
+//        Point2D a1 = internal(m_controlPoints.get(0), m_controlPoints.get(1), _t);
+//        Point2D a2 = internal(m_controlPoints.get(1), m_controlPoints.get(2), _t);
+//        Point2D a3 = internal(m_controlPoints.get(2), m_controlPoints.get(3), _t);
+//        Point2D b1 = internal(a1, a2, _t);
+//        Point2D b2 = internal(a2, a3, _t);
+//        Point2D c1 = internal(b1, b2, _t);
 
         // 手順3: 列挙した式をwhileやforなどのループで圧縮しましょう.
         /* 例: for(何回ループするかは考えてください){
                   (リスト).add(計算した内分点)        // リストは自分で宣言しましょう. 作り方によってはリストが2つ必要かも？
               }
         */
-        return null;
+        List<Point2D> evaluatePoints = new ArrayList<Point2D>(m_controlPoints);
+        while(evaluatePoints.size() > 1) {
+            for (int i = 0; i <= evaluatePoints.size() - 2; i++) {
+                Point2D naibun = internal(evaluatePoints.get(i), evaluatePoints.get(i + 1), _t);
+                evaluatePoints.set(i, naibun);
+            }
+            evaluatePoints.remove(evaluatePoints.size()-1);
+        }
+        return evaluatePoints.get(0);
     }
 
     /**
@@ -37,8 +54,12 @@ public class BezierCurve {
      */
     public static Point2D.Double internal(Point2D _p1, Point2D _p2, double _t){
         //_p1と_p2を(1-_t):_tに内分する.
-        double x = 0.0; /* 内分する式(x)をここに書き込んでください*/
-        double y = 0.0; /* 内分する式(y)をここに書き込んでください*/
+        double x = 0.0;
+        /* 内分する式(x)をここに書き込んでください*/
+        x = _p1.getX() * _t + _p2.getX() * (1-_t);
+        double y = 0.0;
+        /* 内分する式(y)をここに書き込んでください*/
+        y = _p1.getY() * _t + _p2.getY() * (1-_t);
         return new Point2D.Double(x, y);
     }
 
