@@ -100,7 +100,7 @@ public class Main extends JFrame {
         BezierCurve bezierCurve = BezierCurve.create(m_controlPoints);
         List<Point2D> evaluatePoints = new ArrayList<>();
 
-        for(double t = 0; t < T; ++t){
+        for(double t = 0; t < T; t+=0.01){
             evaluatePoints.add(bezierCurve.evaluate(t/T));
         }
         m_evaluatePoints = evaluatePoints;
