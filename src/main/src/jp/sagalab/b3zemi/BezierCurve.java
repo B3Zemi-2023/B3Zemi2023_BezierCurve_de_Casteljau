@@ -8,6 +8,7 @@ public class BezierCurve {
 
     /** 制御点列 */
     private final List<Point2D> m_controlPoints;
+     final List<Point2D> Intternal;
 
     /**
      * パラメータ t に対応する評価点を De Casteljau のアルゴリズムで評価する.
@@ -15,6 +16,18 @@ public class BezierCurve {
      * @return パラメータ t に対応する評価点
      */
     public Point2D evaluate(double _t){
+        Point2D b10=internal(m_controlPoints.get(0),m_controlPoints.get(1),_t);
+        Point2D b11=internal(m_controlPoints.get(1),m_controlPoints.get(2),_t);
+        Point2D b12=internal(m_controlPoints.get(2),m_controlPoints.get(3),_t);
+        Point2D b20=internal(b10,b11,_t);
+        Point2D b21=internal(b11,b12,_t);
+        Point2D b30=internal(b20,b21,_t);
+        public final List<Point2D> Intternal;
+        for(int i=0;i<list.size(m_controlPoints)+1;i++){
+
+            Point2D =internal(m_controlPoints.get(i),m_controlPoints.get(i+1),_t);
+        }
+
         //手順は1例です. 分かる人は無視して大丈夫です.
         // 手順1: 制御点3つのときに限定して計算を考えてみましょう(式を列挙する形でも〇)　
         // 手順2: 制御点4つのときに限定して計算を考えてみましょう(手順1に式を加えるだけです).
@@ -37,8 +50,8 @@ public class BezierCurve {
      */
     public static Point2D.Double internal(Point2D _p1, Point2D _p2, double _t){
         //_p1と_p2を(1-_t):_tに内分する.
-        double x = 0.0; /* 内分する式(x)をここに書き込んでください*/
-        double y = 0.0; /* 内分する式(y)をここに書き込んでください*/
+        double x =(1-_t)*_p1.getX()+_t*_p2.getX();/* 内分する式(x)をここに書き込んでください*/
+        double y =(1-_t)*_p1.getY()+_t*_p2.getY();/* 内分する式(y)をここに書き込んでください*/
         return new Point2D.Double(x, y);
     }
 
