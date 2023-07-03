@@ -19,13 +19,19 @@ public class BezierCurve {
         // 手順1: 制御点3つのときに限定して計算を考えてみましょう(式を列挙する形でも〇)　
         // 手順2: 制御点4つのときに限定して計算を考えてみましょう(手順1に式を加えるだけです).
         // 例: Point2D p = internal(点1, 点2, _t)
+        Point2D p1 = internal(m_controlPoints.get(0), m_controlPoints.get(1), _t);
+        Point2D p2 = internal(m_controlPoints.get(1), m_controlPoints.get(2), _t);
+        Point2D p3 = internal(m_controlPoints.get(2), m_controlPoints.get(3), _t);
+        Point2D p4 = internal(p1, p2, _t);
+        Point2D p5 = internal(p2, p3, _t);
+        Point2D p6 = internal(p4, p5, _t);
 
         // 手順3: 列挙した式をwhileやforなどのループで圧縮しましょう.
         /* 例: for(何回ループするかは考えてください){
                   (リスト).add(計算した内分点)        // リストは自分で宣言しましょう. 作り方によってはリストが2つ必要かも？
               }
         */
-        return null;
+        return p6;
     }
 
     /**
@@ -37,8 +43,14 @@ public class BezierCurve {
      */
     public static Point2D.Double internal(Point2D _p1, Point2D _p2, double _t){
         //_p1と_p2を(1-_t):_tに内分する.
-        double x = 0.0; /* 内分する式(x)をここに書き込んでください*/
-        double y = 0.0; /* 内分する式(y)をここに書き込んでください*/
+        double x = 0.0;
+        /* 内分する式(x)をここに書き込んでください*/
+        x = _p1.getX() * _t + _p2.getX() * (1 - _t);
+
+        double y = 0.0;
+        /* 内分する式(y)をここに書き込んでください*/
+        y = _p1.getY() * _t + _p2.getY() * (1 - _t);
+
         return new Point2D.Double(x, y);
     }
 
