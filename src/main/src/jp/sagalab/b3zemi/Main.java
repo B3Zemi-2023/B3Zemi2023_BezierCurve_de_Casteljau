@@ -21,6 +21,7 @@ public class Main extends JFrame {
     public static void main(String[] _args) {
 //        canMove = true;
         new Main();
+
     }
 
     /**
