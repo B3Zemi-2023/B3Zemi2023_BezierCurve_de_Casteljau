@@ -25,8 +25,32 @@ public class BezierCurve {
                   (リスト).add(計算した内分点)        // リストは自分で宣言しましょう. 作り方によってはリストが2つ必要かも？
               }
         */
-        return null;
+
+        /*
+        List<Point2D> copylist = new ArrayList<>(m_controlPoints);
+        for (int t = copylist.size(); t > 1; t--) {
+            for (int i = 0; i < copylist.size() - 1; i++) {
+                copylist.set(i, internal(copylist.get(i), copylist.get(i + 1), _t));
+            }
+            copylist.remove(copylist.size() - 1);
+        }
+        return copylist.get(0); */
+
+
+        List<Point2D> copylist = new ArrayList<>(m_controlPoints);
+        ArrayList<Point2D> evalist = new ArrayList<>();
+        while (copylist.size() > 1) {
+            evalist.clear();
+            for (int i = 0; i < copylist.size() - 1; i++) {
+                evalist.add(i, internal(copylist.get(i), copylist.get(i + 1), _t));
+            }
+            copylist = new ArrayList<>(evalist);
+        }
+        return evalist.get(0);
+
     }
+
+
 
     /**
      * 2点を内分する点を計算する.
@@ -38,7 +62,9 @@ public class BezierCurve {
     public static Point2D.Double internal(Point2D _p1, Point2D _p2, double _t){
         //_p1と_p2を(1-_t):_tに内分する.
         double x = 0.0; /* 内分する式(x)をここに書き込んでください*/
+        x = (1 - _t) * _p1.getX() + _t * _p2.getX();
         double y = 0.0; /* 内分する式(y)をここに書き込んでください*/
+        y = (1 - _t) * _p1.getY() + _t * _p2.getY();
         return new Point2D.Double(x, y);
     }
 
