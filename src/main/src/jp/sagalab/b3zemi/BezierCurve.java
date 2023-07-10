@@ -31,6 +31,21 @@ public class BezierCurve {
                   (リスト).add(計算した内分点)        // リストは自分で宣言しましょう. 作り方によってはリストが2つ必要かも？
               }
         */
+
+        if(m_controlPoints.size() == 1){
+            return m_controlPoints.get(0);
+        }
+
+        else {
+            List<Point2D> evaluatePoints = new ArrayList<>();
+            for (int i = 0; i <= m_controlPoints.size() - 1; i++) {
+                evaluatePoints.add(internal(m_controlPoints.get(i), m_controlPoints.get(i + 1), _t));
+            }
+
+            BezierCurve newBezierCurve = new BezierCurve(evaluatePoints);
+            return newBezierCurve.evaluate(_t);
+
+        }
         return p6;
     }
 
