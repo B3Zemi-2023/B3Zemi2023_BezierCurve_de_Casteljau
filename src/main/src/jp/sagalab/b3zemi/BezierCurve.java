@@ -8,25 +8,34 @@ public class BezierCurve {
 
     /** 制御点列 */
     private final List<Point2D> m_controlPoints;
-     final List<Point2D> Intternal;
 
     /**
      * パラメータ t に対応する評価点を De Casteljau のアルゴリズムで評価する.
      * @param _t 閉区間 [ 0, 1 ] 内のパラメータ
      * @return パラメータ t に対応する評価点
      */
-    public Point2D evaluate(double _t){
-        Point2D b10=internal(m_controlPoints.get(0),m_controlPoints.get(1),_t);
-        Point2D b11=internal(m_controlPoints.get(1),m_controlPoints.get(2),_t);
-        Point2D b12=internal(m_controlPoints.get(2),m_controlPoints.get(3),_t);
-        Point2D b20=internal(b10,b11,_t);
-        Point2D b21=internal(b11,b12,_t);
-        Point2D b30=internal(b20,b21,_t);
-        public final List<Point2D> Intternal;
-        for(int i=0;i<list.size(m_controlPoints)+1;i++){
 
-            Point2D =internal(m_controlPoints.get(i),m_controlPoints.get(i+1),_t);
+    public Point2D evaluate(double _t){
+//        Point2D b10=internal(m_controlPoints.get(0),m_controlPoints.get(1),_t);
+//        Point2D b11=internal(m_controlPoints.get(1),m_controlPoints.get(2),_t);
+//        Point2D b12=internal(m_controlPoints.get(2),m_controlPoints.get(3),_t);
+//        Point2D b20=internal(b10,b11,_t);
+//        Point2D b21=internal(b11,b12,_t);
+//        Point2D b30=internal(b20,b21,_t);
+
+        List<Point2D> Internal1=new ArrayList<Point2D>(m_controlPoints);
+        List<Point2D> Internal2=new ArrayList<Point2D>();
+
+
+
+        while (Internal1.size() > 1) {
+            Internal2.clear();
+            for (int i = 0; i < Internal1.size() - 1; i++) {
+                Internal2.add(i, internal(Internal1.get(i), Internal1.get(i + 1), _t));
+            }
+            Internal1=new ArrayList<>(Internal2);
         }
+        return Internal2.get(0);
 
         //手順は1例です. 分かる人は無視して大丈夫です.
         // 手順1: 制御点3つのときに限定して計算を考えてみましょう(式を列挙する形でも〇)　
@@ -38,7 +47,7 @@ public class BezierCurve {
                   (リスト).add(計算した内分点)        // リストは自分で宣言しましょう. 作り方によってはリストが2つ必要かも？
               }
         */
-        return null;
+
     }
 
     /**
@@ -64,7 +73,7 @@ public class BezierCurve {
      * @param _controlPoints 制御点列
      * @return Bezier曲線のインスタンス
      */
-    public static BezierCurve create (List<Point2D> _controlPoints){
+    public static BezierCurve create(List<Point2D> _controlPoints){
         return new BezierCurve(_controlPoints);
     }
 
