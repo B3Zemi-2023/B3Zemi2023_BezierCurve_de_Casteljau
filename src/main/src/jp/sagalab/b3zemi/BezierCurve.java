@@ -34,8 +34,8 @@ public class BezierCurve {
         else{
             List<Point2D> evaluatePoints = new ArrayList<>();
             for (int n = 0; n < m_controlPoints.size()-1;n++){
-                Point2D i = internal(m_controlPoints.get(n),m_controlPoints.get(n+1),_t);
-                evaluatePoints.add(i);
+                //Point2D i = internal(m_controlPoints.get(n),m_controlPoints.get(n+1),_t);
+                evaluatePoints.add(internal(m_controlPoints.get(n),m_controlPoints.get(n+1),_t));
             }
             return BezierCurve.create(evaluatePoints).evaluate(_t);
         }
