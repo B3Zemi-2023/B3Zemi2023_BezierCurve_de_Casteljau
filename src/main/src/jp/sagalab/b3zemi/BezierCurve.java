@@ -1,5 +1,6 @@
 package jp.sagalab.b3zemi;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
@@ -18,12 +19,12 @@ public class BezierCurve {
     public Point2D evaluate(double _t){
 
 
-        Point2D p3 = internal(m_controlPoints.get(0),m_controlPoints.get(1),_t);
-        Point2D p4 = internal(m_controlPoints.get(1),m_controlPoints.get(2),_t);
-        Point2D p5 = internal(m_controlPoints.get(2),m_controlPoints.get(3),_t);
-        Point2D p6 = internal(p3,p4,_t);
-        Point2D p7 = internal(p4,p5,_t);
-        Point2D p8 = internal(p6,p7,_t);
+        //Point2D p3 = internal(m_controlPoints.get(0),m_controlPoints.get(1),_t);
+        //Point2D p4 = internal(m_controlPoints.get(1),m_controlPoints.get(2),_t);
+        //Point2D p5 = internal(m_controlPoints.get(2),m_controlPoints.get(3),_t);
+        //Point2D p6 = internal(p3,p4,_t);
+        //Point2D p7 = internal(p4,p5,_t);
+        //Point2D p8 = internal(p6,p7,_t);
 
         //手順は1例です. 分かる人は無視して大丈夫です.
         // 手順1: 制御点3つのときに限定して計算を考えてみましょう(式を列挙する形でも〇)　式
@@ -35,7 +36,17 @@ public class BezierCurve {
                   (リスト).add(計算した内分点)        // リストは自分で宣言しましょう. 作り方によってはリストが2つ必要かも？
               }
         */
-        return p8;
+
+        List<Point2D> copylist = new ArrayList<>(m_controlPoints);
+        List<Point2D> evalist = new ArrayList<>();
+        while (copylist.size() > 1){
+            evalist.clear();
+                for (int i = 0; i < copylist.size() - 1 ; i++ ) {
+                    evalist.add(i, internal(copylist.get(i), copylist.get(i +1), _t));
+                }
+            copylist = new ArrayList<>(evalist);
+        }
+        return copylist.get(0);
     }
 
     /**
