@@ -1,5 +1,6 @@
 package jp.sagalab.b3zemi;
 
+import javax.swing.*;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,14 +26,17 @@ public class BezierCurve {
         Point2D b20 = internal(b10, b11, _t);
         // 例: Point2D p = internal(点1, 点2, _t)
 
-        // 手順3: 列挙した式をwhileやforなどのループで圧縮しましょう.
-
-
-        /* 例: for(何回ループするかは考えてください){
-                  (リスト).add(計算した内分点)        // リストは自分で宣言しましょう. 作り方によってはリストが2つ必要かも？
-              }
-        */
-        return b20;
+        // 手順3: 列挙した式をwhileやforなどのループで圧縮しましょう //
+        List<Point2D> copylist = new ArrayList<>(m_controlPoints);
+        List<Point2D> evalist = new ArrayList<>();
+        while (copylist.size() > 1){
+            evalist.clear();
+            for (int i = 0; i < copylist.size() - 1; i++){
+                evalist.add(i, internal(copylist.get(i), copylist.get(i + 1),_t));
+            }
+            copylist = new ArrayList<>(evalist);
+        }
+        return evalist.get(0);
     }
 
     /**
