@@ -20,9 +20,15 @@ public class BezierCurve {
         //Point2D p5 = internal(m_controlPoints.get(0),m_controlPoints.get(1),_t);
         //Point2D p6 = internal(m_controlPoints.get(1),m_controlPoints.get(2),_t);
         //Point2D p7 = internal(p5,p6,_t);
+
         // 手順2: 制御点4つのときに限定して計算を考えてみましょう(手順1に式を加えるだけです).
         //point2D p4 = internal(点1,点2,点3,点4)
-        //　
+        //Point2D p5 = internal(m_controlPoints.get(0),m_controlPoints.get(1),_t);
+        //Point2D p6 = internal(m_controlPoints.get(1),m_controlPoints.get(2),_t);
+        //Point2D p7 = internal(m_controlPoints.get(2),m_controlPoints.get(3),_t);
+        //Point2D p8 = internal(p5,p6,_t);
+        //Point2D p9 = internal(p6,p7,_t);
+        //Point2D p10 = internal(p8,p9,_t);
         // 例: Point2D p = internal(点1, 点2, _t)
 
         // 手順3: 列挙した式をwhileやforなどのループで圧縮しましょう.
@@ -30,9 +36,21 @@ public class BezierCurve {
                   (リスト).add(計算した内分点)        // リストは自分で宣言しましょう. 作り方によってはリストが2つ必要かも？
               }
         */
-        return p7;
+
+        //再帰なし
+        List<Point2D> copylist = new ArrayList<Point2D>(m_controlPoints);
+        List<Point2D> evalist = new ArrayList<Point2D>();
+        while(copylist.size() > 1) {
+            evalist.clear();
+            for(int i = 0; i < copylist.size() - 1; i++){
+                evalist.add(i, internal(copylist.get(i), copylist.get(i+1), _t));
+            }
+            copylist = new ArrayList<Point2D>(evalist);
+        }
+        return evalist.get(0);
     }
 
+        //return evalist
     /**
      * 2点を内分する点を計算する.
      * @param _p1 1つめの点
