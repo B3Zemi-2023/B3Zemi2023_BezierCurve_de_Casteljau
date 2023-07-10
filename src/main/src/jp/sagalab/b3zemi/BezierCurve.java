@@ -38,7 +38,7 @@ public class BezierCurve {
 
 
         List<Point2D> copylist = new ArrayList<>(m_controlPoints);
-        ArrayList<Point2D> evalist = new ArrayList<>();
+        List<Point2D> evalist = new ArrayList<>();
         while (copylist.size() > 1) {
             evalist.clear();
             for (int i = 0; i < copylist.size() - 1; i++) {
