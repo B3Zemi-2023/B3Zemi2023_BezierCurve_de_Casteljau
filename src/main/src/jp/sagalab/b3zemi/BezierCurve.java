@@ -19,12 +19,6 @@ public class BezierCurve {
         // 手順1: 制御点3つのときに限定して計算を考えてみましょう(式を列挙する形でも〇)　
         // 手順2: 制御点4つのときに限定して計算を考えてみましょう(手順1に式を加えるだけです).
         // 例: Point2D p = internal(点1, 点2, _t)
-        Point2D p1 = internal(m_controlPoints.get(0), m_controlPoints.get(1), _t);
-        Point2D p2 = internal(m_controlPoints.get(1), m_controlPoints.get(2), _t);
-        Point2D p3 = internal(m_controlPoints.get(2), m_controlPoints.get(3), _t);
-        Point2D p4 = internal(p1, p2, _t);
-        Point2D p5 = internal(p2, p3, _t);
-        Point2D p6 = internal(p4, p5, _t);
 
         // 手順3: 列挙した式をwhileやforなどのループで圧縮しましょう.
         /* 例: for(何回ループするかは考えてください){
@@ -46,7 +40,6 @@ public class BezierCurve {
             return newBezierCurve.evaluate(_t);
 
         }
-        return p6;
     }
 
     /**
